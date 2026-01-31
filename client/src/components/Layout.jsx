@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { MapPin, Menu, X, LogOut, Calendar, User, Home, Users, Scissors, DollarSign, BarChart3, Settings, Package, CreditCard, ClipboardList } from 'lucide-react';
+import { MapPin, Menu, X, LogOut, Calendar, User, Home, Users, Scissors, DollarSign, BarChart3, Settings, Package, CreditCard, ClipboardList, BookUser } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Layout.css';
 
@@ -14,12 +14,14 @@ const navByRole = {
     { to: '/dashboard', label: 'Dashboard', icon: Home },
     { to: '/schedule', label: 'Schedule', icon: Calendar },
     { to: '/appointments', label: 'Appointments', icon: Calendar },
+    { to: '/clients', label: 'Clients', icon: BookUser },
     { to: '/profile', label: 'Profile', icon: User },
   ],
   manager: [
     { to: '/dashboard', label: 'Dashboard', icon: Home },
     { to: '/schedule', label: 'Schedule', icon: Calendar },
     { to: '/appointments', label: 'Appointments', icon: Calendar },
+    { to: '/clients', label: 'Clients', icon: BookUser },
     { to: '/inventory', label: 'Inventory', icon: Package },
     { to: '/profile', label: 'Profile', icon: User },
   ],
@@ -27,6 +29,7 @@ const navByRole = {
     { to: '/dashboard', label: 'Dashboard', icon: Home },
     { to: '/daily-cuts', label: 'Daily Cuts', icon: ClipboardList },
     { to: '/analytics', label: 'Analytics', icon: BarChart3 },
+    { to: '/clients', label: 'Clients', icon: BookUser },
     { to: '/staff', label: 'Staff', icon: Users },
     { to: '/services', label: 'Services', icon: Scissors },
     { to: '/locations', label: 'Locations', icon: MapPin },
@@ -38,6 +41,7 @@ const navByRole = {
     { to: '/dashboard', label: 'Dashboard', icon: Home },
     { to: '/daily-cuts', label: 'Daily Cuts', icon: ClipboardList },
     { to: '/analytics', label: 'Analytics', icon: BarChart3 },
+    { to: '/clients', label: 'Clients', icon: BookUser },
     { to: '/staff', label: 'Staff', icon: Users },
     { to: '/services', label: 'Services', icon: Scissors },
     { to: '/locations', label: 'Locations', icon: MapPin },

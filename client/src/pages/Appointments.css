@@ -35,6 +35,7 @@
 .apt-status.status-confirmed { background: rgba(212, 175, 55, 0.25); color: var(--ff-gold); }
 .apt-status.status-completed { background: rgba(34, 197, 94, 0.25); color: #4ade80; }
 .apt-status.status-cancelled { background: rgba(220, 38, 38, 0.25); color: #fca5a5; }
+.apt-status.status-no_show { background: rgba(120, 53, 15, 0.25); color: #fdba74; }
 .apt-status.status-pending { background: rgba(59, 130, 246, 0.25); color: #93c5fd; }
 
 .apt-date {
@@ -73,6 +74,64 @@
 .apt-price {
   font-size: 0.9rem;
   color: var(--ff-gold);
+}
+
+.apt-discount { color: var(--ff-gray); font-size: 0.85em; }
+.apt-refund { color: #f87171; font-size: 0.85em; }
+
+.apt-actions {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--ff-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.apt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid var(--ff-border);
+  background: var(--ff-card);
+  color: var(--ff-fg);
+  cursor: pointer;
+}
+
+.apt-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.apt-btn-cancel { border-color: #f87171; color: #f87171; }
+.apt-btn-cancel:hover:not(:disabled) { background: rgba(248, 113, 113, 0.1); }
+
+.apt-btn-no-show { border-color: #fb923c; color: #fb923c; }
+.apt-btn-no-show:hover:not(:disabled) { background: rgba(251, 146, 60, 0.1); }
+
+.apt-btn-adjust, .apt-btn-primary { border-color: var(--ff-gold); color: var(--ff-gold); }
+.apt-btn-adjust:hover:not(:disabled), .apt-btn-primary:hover:not(:disabled) { background: rgba(212, 175, 55, 0.1); }
+
+.apt-btn-ghost { border-color: transparent; color: var(--ff-gray); }
+
+.apt-action-error { margin-bottom: 1rem; }
+
+.apt-adjust-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.apt-adjust-form label { font-size: 0.8rem; color: var(--ff-gray); }
+.apt-input {
+  width: 5rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--ff-border);
+  border-radius: 6px;
+  font-size: 0.875rem;
 }
 
 .empty-state {

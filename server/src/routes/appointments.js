@@ -59,7 +59,8 @@ appointmentsRouter.post(
   body('notes').optional().trim(),
   async (req, res) => {
     if (validationError(req, res)) return;
-    const clientId = req.body.clientId || (req.role === 'client' ? req.userId : null);
+    // Clients can only book for themselves (use JWT userId so payment intent 403 is avoided)
+    const clientId = req.role === 'client' ? req.userId : (req.body.clientId || null);
     if (!clientId) return res.status(400).json({ error: 'clientId required' });
     const service = await prisma.service.findUnique({ where: { id: req.body.serviceId } });
     if (!service) return res.status(400).json({ error: 'Service not found' });
@@ -115,7 +116,47 @@ appointmentsRouter.post(
   }
 );
 
-// PATCH /api/appointments/:id — status, paymentStatus, notes (staff)
+// POST /api/appointments/:id/cancel — client cancels own; staff can cancel/no-show
+appointmentsRouter.post(
+  '/:id/cancel',
+  param('id').notEmpty(),
+  body('reason').optional().isIn(['cancelled', 'no_show']),
+  async (req, res) => {
+    if (validationError(req, res)) return;
+    const apt = await prisma.appointment.findUnique({
+      where: { id: req.params.id },
+      include: { client: true, service: true, location: true },
+    });
+    if (!apt) return res.status(404).json({ error: 'Appointment not found' });
+    const isClient = req.role === 'client' && apt.clientId === req.userId;
+    const isStaff = ['barber', 'manager', 'owner', 'admin'].includes(req.role);
+    const barberAccess = req.role === 'barber' && apt.barberId === req.userId;
+
+    if (isClient) {
+      if (!['pending', 'confirmed'].includes(apt.status)) return res.status(400).json({ error: 'Only pending or confirmed appointments can be cancelled' });
+      const updated = await prisma.appointment.update({
+        where: { id: apt.id },
+        data: { status: 'cancelled', cancelledAt: new Date() },
+        include: APPOINTMENT_INCLUDE,
+      });
+      return res.json(updated);
+    }
+    if (isStaff && (req.role !== 'barber' || barberAccess)) {
+      const reason = req.body.reason === 'no_show' ? 'no_show' : 'cancelled';
+      const data = { status: reason, cancelledAt: new Date() };
+      if (apt.paymentStatus === 'prepaid_online') data.paymentStatus = 'refunded';
+      const updated = await prisma.appointment.update({
+        where: { id: apt.id },
+        data,
+        include: APPOINTMENT_INCLUDE,
+      });
+      return res.json(updated);
+    }
+    return res.status(403).json({ error: 'You cannot cancel this appointment' });
+  }
+);
+
+// PATCH /api/appointments/:id — status, paymentStatus, notes, discountCents, refundCents (staff)
 appointmentsRouter.patch(
   '/:id',
   requireRoles('barber', 'manager', 'owner', 'admin'),
@@ -123,6 +164,8 @@ appointmentsRouter.patch(
   body('status').optional().isIn(['pending', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show']),
   body('paymentStatus').optional().isIn(['unpaid', 'paid_at_shop', 'prepaid_online', 'refunded']),
   body('notes').optional().trim(),
+  body('discountCents').optional().isInt({ min: 0 }),
+  body('refundCents').optional().isInt({ min: 0 }),
   async (req, res) => {
     if (validationError(req, res)) return;
     const apt = await prisma.appointment.findUnique({ where: { id: req.params.id } });
@@ -132,10 +175,17 @@ appointmentsRouter.patch(
     if (req.body.status !== undefined) data.status = req.body.status;
     if (req.body.paymentStatus !== undefined) data.paymentStatus = req.body.paymentStatus;
     if (req.body.notes !== undefined) data.notes = req.body.notes;
+    if (req.body.discountCents !== undefined) data.discountCents = req.body.discountCents;
+    if (req.body.refundCents !== undefined) {
+      data.refundCents = req.body.refundCents;
+      data.refundedAt = new Date();
+      data.refundedBy = req.userId;
+      if (req.body.refundCents > 0) data.paymentStatus = 'refunded';
+    }
     const updated = await prisma.appointment.update({
       where: { id: req.params.id },
       data,
-      include: { client: { select: { id: true, name: true } }, barber: { select: { id: true, name: true } }, service: { select: { id: true, name: true } }, location: { select: { id: true, name: true } } },
+      include: { client: { select: { id: true, name: true, email: true, phone: true } }, barber: { select: { id: true, name: true } }, service: { select: { id: true, name: true } }, location: { select: { id: true, name: true } } },
     });
     res.json(updated);
   }

@@ -9,6 +9,7 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [todayAppointments, setTodayAppointments] = useState([]);
+  const [dailySales, setDailySales] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,12 +21,17 @@ export default function Dashboard() {
       Promise.all([
         admin.stats(user?.locationId || undefined),
         appointments.list({ from, to }),
+        admin.dailySales().catch(() => []),
       ])
-        .then(([s, list]) => {
+        .then(([s, list, sales]) => {
           setStats(s);
           setTodayAppointments(list);
+          setDailySales(Array.isArray(sales) ? sales : []);
         })
-        .catch(() => setStats({ totalAppointments: 0, completedToday: 0, totalRevenueCents: 0, staffCount: 0 }))
+        .catch(() => {
+          setStats({ totalAppointments: 0, completedToday: 0, totalRevenueCents: 0, staffCount: 0 });
+          setDailySales([]);
+        })
         .finally(() => setLoading(false));
     } else {
       appointments.list({ from, to })
@@ -67,6 +73,36 @@ export default function Dashboard() {
             <div className="stat-label">Staff</div>
           </Link>
         </div>
+      )}
+
+      {isOwnerOrAdmin && dailySales.length > 0 && (
+        <>
+          <h2 className="dashboard-section">Daily Sales Report</h2>
+          <p className="page-subtitle">Paid sales today (all locations).</p>
+          <div className="appointments-list" style={{ marginBottom: '2rem' }}>
+            {dailySales.map((sale) => (
+              <div key={sale.id} className="appointment-card">
+                <div className="apt-header">
+                  <span className={`apt-status status-${sale.paymentStatus === 'prepaid_online' ? 'confirmed' : 'completed'}`}>
+                    {sale.paymentStatus === 'prepaid_online' ? 'Online' : 'At shop'}
+                  </span>
+                  <span className="apt-date">
+                    {new Date(sale.startAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                  </span>
+                </div>
+                <div className="apt-body">
+                  <div className="apt-service">{sale.service?.name}</div>
+                  <div className="apt-meta">
+                    {sale.client && <span><Users size={14} /> {sale.client.name}</span>}
+                    {sale.barber && <span>Barber: {sale.barber.name}</span>}
+                    {sale.location && <span><MapPin size={14} /> {sale.location.name}</span>}
+                  </div>
+                  <div className="apt-price">${(sale.totalCents / 100).toFixed(2)}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       <h2 className="dashboard-section">Today&apos;s Appointments</h2>

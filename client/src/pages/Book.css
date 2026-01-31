@@ -199,6 +199,18 @@
   border-top: 1px solid var(--ff-border);
 }
 
+.book-payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.book-payment-options .btn {
+  width: 100%;
+  justify-content: center;
+}
+
 .btn {
   padding: 0.75rem 1.25rem;
   border-radius: 8px;

@@ -60,12 +60,16 @@ export const appointments = {
   get: (id) => api(`/appointments/${id}`),
   create: (body) => api('/appointments', { method: 'POST', body }),
   update: (id, body) => api(`/appointments/${id}`, { method: 'PATCH', body }),
+  cancel: (id, reason) =>
+    api(`/appointments/${id}/cancel`, { method: 'POST', body: reason ? { reason } : {} }),
 };
 
 export const payments = {
   config: () => api('/payments/config'),
   createPaymentIntent: (appointmentId, amountCents) =>
     api('/payments/create-payment-intent', { method: 'POST', body: { appointmentId, amountCents } }),
+  confirmPrepaid: (appointmentId) =>
+    api('/payments/confirm-prepaid', { method: 'POST', body: { appointmentId } }),
   confirmPaidAtShop: (appointmentId) =>
     api('/payments/confirm-paid-at-shop', { method: 'POST', body: { appointmentId } }),
 };
@@ -92,11 +96,20 @@ export const payroll = {
 
 export const admin = {
   stats: (locationId) => api(locationId ? `/admin/stats?locationId=${locationId}` : '/admin/stats'),
+  dailySales: () => api('/admin/daily-sales'),
+  analytics: (period) => api(`/admin/analytics?period=${period || 'day'}`),
   users: (params) => {
     const q = new URLSearchParams(params).toString();
     return api(q ? `/admin/users?${q}` : '/admin/users');
   },
   sendTestEmail: (to) => api('/admin/test-email', { method: 'POST', body: { to } }),
+};
+
+export const clients = {
+  list: (params) => {
+    const q = new URLSearchParams(params).toString();
+    return api(q ? `/clients?${q}` : '/clients');
+  },
 };
 
 export const users = {

@@ -14,6 +14,7 @@ import Locations from './pages/Locations';
 import Settings from './pages/Settings';
 import DailyCuts from './pages/DailyCuts';
 import Analytics from './pages/Analytics';
+import Clients from './pages/Clients';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -50,6 +51,7 @@ export default function App() {
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/daily-cuts" element={<DailyCuts />} />
                   <Route path="/analytics" element={<Analytics />} />
+                  <Route path="/clients" element={<Clients />} />
                   <Route path="/staff" element={<Staff />} />
                   <Route path="/services" element={<Services />} />
                   <Route path="/locations" element={<Locations />} />

@@ -97,6 +97,11 @@ model Appointment {
   status        String            @default("pending") // pending | confirmed | in_progress | completed | cancelled | no_show
   paymentStatus String            @default("unpaid") @map("payment_status") // unpaid | paid_at_shop | prepaid_online | refunded
   totalCents    Int               @map("total_cents")
+  discountCents Int              @default(0) @map("discount_cents")
+  refundCents   Int               @default(0) @map("refund_cents")
+  refundedAt    DateTime?         @map("refunded_at")
+  refundedBy    String?           @map("refunded_by")
+  cancelledAt   DateTime?         @map("cancelled_at")
   stripePaymentIntentId String?   @map("stripe_payment_intent_id")
   notes         String?
   createdAt     DateTime          @default(now()) @map("created_at")

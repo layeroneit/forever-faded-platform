@@ -42,7 +42,13 @@ Auth: Send `Authorization: Bearer <token>` for protected routes. Token from `POS
 | GET | /appointments | locationId?, from?, to? | All | List (filtered by role) |
 | GET | /appointments/:id | — | All | One (client/barber own only) |
 | POST | /appointments | locationId, barberId, serviceId, startAt (ISO), clientId?, notes? | All | Create (clientId defaults to self for clients) |
-| PATCH | /appointments/:id | status?, paymentStatus?, notes? | barber, manager, owner, admin | Update status/notes |
+| POST | /appointments/:id/cancel | reason?: 'cancelled' \| 'no_show' | client (own), barber/owner (no_show) | Cancel; client cancels own (pending/confirmed); staff can mark no_show |
+| PATCH | /appointments/:id | status?, paymentStatus?, notes?, discountCents?, refundCents? | barber, manager, owner, admin | Update; barber only own appointments; refundCents sets refundedAt/refundedBy |
+
+### Clients (library)
+| Method | Path | Body / Query | Who | Description |
+|--------|------|--------------|-----|--------------|
+| GET | /clients | barberId?, locationId? | barber, manager, owner, admin | Client list: barbers see clients who booked them; owners see all. Returns lastBookingAt, totalAppointments, lastServiceName. |
 
 ### Users
 | Method | Path | Body / Query | Who | Description |

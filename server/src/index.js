@@ -22,13 +22,19 @@ import { inventoryRouter } from './routes/inventory.js';
 import { payrollRouter } from './routes/payroll.js';
 import { adminRouter } from './routes/admin.js';
 import { usersRouter } from './routes/users.js';
+import { clientsRouter } from './routes/clients.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { authMiddleware } from './middleware/auth.js';
+import { stripeWebhook } from './routes/payments.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors({ origin: true, credentials: true }));
+
+// Stripe webhook needs raw body for signature verification (register before express.json())
+app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
+
 app.use(express.json());
 
 // Health (no auth)
@@ -47,6 +53,7 @@ app.use('/api/inventory', authMiddleware, inventoryRouter);
 app.use('/api/payroll', authMiddleware, payrollRouter);
 app.use('/api/admin', authMiddleware, adminRouter);
 app.use('/api/users', authMiddleware, usersRouter);
+app.use('/api/clients', authMiddleware, clientsRouter);
 
 // Unmatched API routes → 404 JSON (so client gets { error: "Not found" } instead of empty)
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not found' }));
