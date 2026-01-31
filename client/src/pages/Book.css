@@ -1,0 +1,230 @@
+.book-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.book-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  gap: 0.5rem;
+}
+
+.book-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--ff-gray);
+}
+
+.book-step.active {
+  color: var(--ff-gold);
+}
+
+.book-step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--ff-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.book-step.active .book-step-num {
+  background: var(--ff-gold);
+  border-color: var(--ff-gold);
+  color: var(--ff-black);
+}
+
+.book-step.done .book-step-num {
+  border-color: var(--ff-gold);
+  background: rgba(212, 175, 55, 0.2);
+}
+
+.book-panel {
+  background: var(--ff-card);
+  border: 1px solid var(--ff-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.book-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ff-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.book-select,
+.book-input {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--ff-border);
+  border-radius: 8px;
+  color: var(--ff-white);
+  margin-bottom: 1rem;
+}
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.book-card {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 2px solid var(--ff-border);
+  border-radius: 10px;
+  text-align: left;
+  color: var(--ff-white);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.book-card:hover {
+  border-color: var(--ff-gold);
+}
+
+.book-card.selected {
+  border-color: var(--ff-gold);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.book-card-name {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.book-card-meta {
+  font-size: 0.8rem;
+  color: var(--ff-gold);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.book-card-price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ff-gold);
+}
+
+.book-grid.barbers .book-card {
+  text-align: center;
+}
+
+.book-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ff-gold), var(--ff-red));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin: 0 auto 0.5rem;
+}
+
+.book-times {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.book-time {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--ff-border);
+  border-radius: 8px;
+  color: var(--ff-white);
+  font-size: 0.9rem;
+}
+
+.book-time:hover {
+  border-color: var(--ff-gold);
+}
+
+.book-time.selected {
+  background: var(--ff-gold);
+  border-color: var(--ff-gold);
+  color: var(--ff-black);
+}
+
+.book-summary {
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+  border-top: 1px solid var(--ff-border);
+  border-bottom: 1px solid var(--ff-border);
+}
+
+.book-summary p {
+  margin-bottom: 0.5rem;
+}
+
+.book-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btn {
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--ff-gold), var(--ff-gold-light));
+  color: var(--ff-black);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--ff-gold);
+  color: var(--ff-gold);
+}
+
+.btn-secondary:hover {
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.page-loading,
+.page-error {
+  text-align: center;
+  padding: 2rem;
+  color: var(--ff-gray);
+}
+
+.page-error {
+  color: #fca5a5;
+}

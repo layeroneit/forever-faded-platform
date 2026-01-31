@@ -1,0 +1,61 @@
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Layout from './components/Layout';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Book from './pages/Book';
+import Appointments from './pages/Appointments';
+import Profile from './pages/Profile';
+import Dashboard from './pages/Dashboard';
+
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="page-loading">Loading…</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  return <Layout>{children}</Layout>;
+}
+
+function Placeholder({ title }) {
+  return (
+    <div>
+      <h1 className="page-title">{title}</h1>
+      <p className="page-subtitle">Coming soon. Use the API for now.</p>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <Routes>
+                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/book" element={<Book />} />
+                  <Route path="/appointments" element={<Appointments />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/analytics" element={<Placeholder title="Analytics" />} />
+                  <Route path="/staff" element={<Placeholder title="Staff" />} />
+                  <Route path="/services" element={<Placeholder title="Services" />} />
+                  <Route path="/locations" element={<Placeholder title="Locations" />} />
+                  <Route path="/schedule" element={<Placeholder title="Schedule" />} />
+                  <Route path="/inventory" element={<Placeholder title="Inventory" />} />
+                  <Route path="/payroll" element={<Placeholder title="Payroll" />} />
+                  <Route path="/settings" element={<Placeholder title="Settings" />} />
+                </Routes>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}

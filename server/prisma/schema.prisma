@@ -1,0 +1,164 @@
+// Forever Faded - Database Schema
+// Multi-location, RBAC, appointments, payroll, inventory
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============ RBAC & Auth ============
+// SQLite does not support enums; use String (values: client, barber, manager, owner, admin)
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  name          String
+  phone         String?
+  role          String    // client | barber | manager | owner | admin
+  avatarUrl     String?   @map("avatar_url")
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Multi-location: barbers/managers/owners belong to location(s)
+  locationId    String?   @map("location_id")
+  location      Location? @relation(fields: [locationId], references: [id])
+
+  // Client preferences
+  preferredBarberId String? @map("preferred_barber_id")
+  preferredBarber   User?   @relation("ClientPreferredBarber", fields: [preferredBarberId], references: [id])
+
+  // Relations
+  appointmentsAsClient Appointment[] @relation("ClientAppointments")
+  appointmentsAsBarber  Appointment[] @relation("BarberAppointments")
+  clientsPreferring     User[]        @relation("ClientPreferredBarber")
+  scheduleSlots         ScheduleSlot[]
+  payrollEntries        PayrollEntry[]
+  inventoryLogs         InventoryLog[]
+}
+
+// ============ Multi-Location ============
+model Location {
+  id          String   @id @default(cuid())
+  name        String
+  address     String
+  city        String
+  state       String?
+  zip         String?
+  phone       String?
+  timezone    String   @default("America/New_York")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  users       User[]
+  services    Service[]
+  appointments Appointment[]
+  inventory   InventoryItem[]
+  scheduleSlots ScheduleSlot[]
+  payrollEntries PayrollEntry[]
+}
+
+// ============ Services (per location) ============
+model Service {
+  id          String   @id @default(cuid())
+  locationId  String   @map("location_id")
+  location    Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  durationMinutes Int   @map("duration_minutes") // e.g. 30, 45
+  priceCents  Int      @map("price_cents")        // e.g. 3500 = $35.00
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  appointments Appointment[]
+}
+
+// ============ Appointments ============
+// SQLite does not support enums; use String for status and paymentStatus
+model Appointment {
+  id            String            @id @default(cuid())
+  locationId    String            @map("location_id")
+  location      Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  clientId      String            @map("client_id")
+  client        User              @relation("ClientAppointments", fields: [clientId], references: [id], onDelete: Cascade)
+  barberId      String            @map("barber_id")
+  barber        User              @relation("BarberAppointments", fields: [barberId], references: [id], onDelete: Cascade)
+  serviceId     String            @map("service_id")
+  service       Service           @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  startAt       DateTime          @map("start_at")
+  endAt         DateTime          @map("end_at")
+  status        String            @default("pending") // pending | confirmed | in_progress | completed | cancelled | no_show
+  paymentStatus String            @default("unpaid") @map("payment_status") // unpaid | paid_at_shop | prepaid_online | refunded
+  totalCents    Int               @map("total_cents")
+  stripePaymentIntentId String?   @map("stripe_payment_intent_id")
+  notes         String?
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+}
+
+// ============ Staff Scheduling ============
+model ScheduleSlot {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  locationId String   @map("location_id")
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  dayOfWeek  Int      @map("day_of_week") // 0 = Sunday, 6 = Saturday
+  startTime  String   @map("start_time")  // "09:00"
+  endTime    String   @map("end_time")    // "17:00"
+  isAvailable Boolean @default(true) @map("is_available")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, locationId, dayOfWeek])
+}
+
+// ============ Payroll & Commissions ============
+model PayrollEntry {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  locationId   String   @map("location_id")
+  location     Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  periodStart  DateTime @map("period_start")
+  periodEnd    DateTime @map("period_end")
+  commissionRatePercent Int @map("commission_rate_percent") // e.g. 65
+  grossCents   Int      @map("gross_cents")
+  commissionCents Int   @map("commission_cents")
+  paidAt       DateTime? @map("paid_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+}
+
+// ============ Inventory ============
+model InventoryItem {
+  id            String   @id @default(cuid())
+  locationId    String   @map("location_id")
+  location      Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  name          String
+  sku           String?
+  quantity      Int      @default(0)
+  reorderPoint  Int      @map("reorder_point") @default(10)
+  unit          String   @default("each")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  logs          InventoryLog[]
+}
+
+model InventoryLog {
+  id            String   @id @default(cuid())
+  itemId        String   @map("item_id")
+  item          InventoryItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  userId        String?  @map("user_id")
+  user          User?    @relation(fields: [userId], references: [id])
+  change        Int      // positive = received, negative = used
+  reason        String?  // "restock", "used", "adjustment"
+  createdAt     DateTime @default(now()) @map("created_at")
+}

@@ -1,0 +1,41 @@
+/* Forever Faded — brand colors */
+:root {
+  --ff-black: #0a0a0a;
+  --ff-gold: #d4af37;
+  --ff-gold-light: #e8c547;
+  --ff-white: #ffffff;
+  --ff-red: #dc2626;
+  --ff-blue: #2563eb;
+  --ff-gray: rgba(255, 255, 255, 0.6);
+  --ff-bg: #0a0a0a;
+  --ff-card: rgba(26, 26, 26, 0.95);
+  --ff-border: rgba(212, 175, 55, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--ff-bg);
+  color: var(--ff-white);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--ff-gold);
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input, select, textarea {
+  font-family: inherit;
+}
