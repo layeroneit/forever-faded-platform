@@ -35,7 +35,9 @@ export default function Book() {
     users.list({ locationId, role: 'barber' }).then(setBarbers).catch(() => setBarbers([]));
   }, [locationId]);
 
-  const filteredServices = locationId ? servicesList.filter((s) => s.locationId === locationId) : servicesList;
+  const filteredServices = locationId
+    ? servicesList.filter((s) => s.locationId === locationId || s.locationId == null)
+    : servicesList;
   const timeSlots = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'];
 
   const handleBook = async () => {
@@ -56,7 +58,6 @@ export default function Book() {
       setBarber(null);
       setDate('');
       setTime('');
-      setStep(1);
       alert('Booking confirmed.');
     } catch (e) {
       setError(e.message);
@@ -71,12 +72,12 @@ export default function Book() {
   return (
     <div className="book-page">
       <h1 className="page-title">Book Appointment</h1>
-      <p className="page-subtitle">Choose location, service, barber, and time.</p>
+      <p className="page-subtitle">Choose location, barber, service, and time.</p>
 
       <div className="book-steps">
         <div className={`book-step ${step >= 1 ? 'active' : ''} ${step > 1 ? 'done' : ''}`}>
           <span className="book-step-num">1</span>
-          <span>Service</span>
+          <span>Location</span>
         </div>
         <div className={`book-step ${step >= 2 ? 'active' : ''} ${step > 2 ? 'done' : ''}`}>
           <span className="book-step-num">2</span>
@@ -84,23 +85,69 @@ export default function Book() {
         </div>
         <div className={`book-step ${step >= 3 ? 'active' : ''} ${step > 3 ? 'done' : ''}`}>
           <span className="book-step-num">3</span>
+          <span>Service</span>
+        </div>
+        <div className={`book-step ${step >= 4 ? 'active' : ''} ${step > 4 ? 'done' : ''}`}>
+          <span className="book-step-num">4</span>
           <span>Date & Time</span>
         </div>
-        <div className={`book-step ${step >= 4 ? 'active' : ''}`}>
-          <span className="book-step-num">4</span>
+        <div className={`book-step ${step >= 5 ? 'active' : ''}`}>
+          <span className="book-step-num">5</span>
           <span>Confirm</span>
         </div>
       </div>
 
+      {/* Step 1: Location */}
       {step === 1 && (
         <div className="book-panel">
-          <label className="book-label">Location</label>
+          <label className="book-label">Choose location</label>
           <select className="book-select" value={locationId} onChange={(e) => setLocationId(e.target.value)}>
             {locationsList.map((loc) => (
               <option key={loc.id} value={loc.id}>{loc.name}</option>
             ))}
           </select>
-          <label className="book-label">Service</label>
+          <div className="book-actions">
+            <span />
+            <button type="button" className="btn btn-primary" onClick={() => setStep(2)}>
+              Next <ChevronRight size={18} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Barber (for this location) */}
+      {step === 2 && (
+        <div className="book-panel">
+          <label className="book-label">Choose barber at {locationsList.find((l) => l.id === locationId)?.name}</label>
+          <div className="book-grid barbers">
+            {barbers.map((b) => (
+              <button
+                key={b.id}
+                type="button"
+                className={`book-card barber ${barber?.id === b.id ? 'selected' : ''}`}
+                onClick={() => setBarber(b)}
+              >
+                <div className="book-avatar">{b.name.split(' ').map((n) => n[0]).join('')}</div>
+                <div className="book-card-name">{b.name}</div>
+              </button>
+            ))}
+          </div>
+          {barbers.length === 0 && (
+            <p className="book-empty">No barbers at this location yet.</p>
+          )}
+          <div className="book-actions">
+            <button type="button" className="btn btn-secondary" onClick={() => setStep(1)}>Back</button>
+            <button type="button" className="btn btn-primary" disabled={!barber} onClick={() => setStep(3)}>
+              Next <ChevronRight size={18} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 3: Service */}
+      {step === 3 && (
+        <div className="book-panel">
+          <label className="book-label">Choose service</label>
           <div className="book-grid">
             {filteredServices.map((s) => (
               <button
@@ -115,36 +162,17 @@ export default function Book() {
               </button>
             ))}
           </div>
-          <button type="button" className="btn btn-primary" disabled={!service} onClick={() => setStep(2)}>
-            Next <ChevronRight size={18} />
-          </button>
-        </div>
-      )}
-
-      {step === 2 && (
-        <div className="book-panel">
-          <label className="book-label">Choose Barber</label>
-          <div className="book-grid barbers">
-            {barbers.map((b) => (
-              <button
-                key={b.id}
-                type="button"
-                className={`book-card barber ${barber?.id === b.id ? 'selected' : ''}`}
-                onClick={() => setBarber(b)}
-              >
-                <div className="book-avatar">{b.name.split(' ').map((n) => n[0]).join('')}</div>
-                <div className="book-card-name">{b.name}</div>
-              </button>
-            ))}
-          </div>
           <div className="book-actions">
-            <button type="button" className="btn btn-secondary" onClick={() => setStep(1)}>Back</button>
-            <button type="button" className="btn btn-primary" disabled={!barber} onClick={() => setStep(3)}>Next <ChevronRight size={18} /></button>
+            <button type="button" className="btn btn-secondary" onClick={() => setStep(2)}>Back</button>
+            <button type="button" className="btn btn-primary" disabled={!service} onClick={() => setStep(4)}>
+              Next <ChevronRight size={18} />
+            </button>
           </div>
         </div>
       )}
 
-      {step === 3 && (
+      {/* Step 4: Date & Time */}
+      {step === 4 && (
         <div className="book-panel">
           <label className="book-label">Date</label>
           <input type="date" className="book-input" value={date} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setDate(e.target.value)} />
@@ -161,23 +189,26 @@ export default function Book() {
             </>
           )}
           <div className="book-actions">
-            <button type="button" className="btn btn-secondary" onClick={() => setStep(2)}>Back</button>
-            <button type="button" className="btn btn-primary" disabled={!date || !time} onClick={() => setStep(4)}>Next <ChevronRight size={18} /></button>
+            <button type="button" className="btn btn-secondary" onClick={() => setStep(3)}>Back</button>
+            <button type="button" className="btn btn-primary" disabled={!date || !time} onClick={() => setStep(5)}>
+              Next <ChevronRight size={18} />
+            </button>
           </div>
         </div>
       )}
 
-      {step === 4 && (
+      {/* Step 5: Confirmation */}
+      {step === 5 && (
         <div className="book-panel">
           <div className="book-summary">
             <p><strong>Location:</strong> {locationsList.find((l) => l.id === locationId)?.name}</p>
-            <p><strong>Service:</strong> {service?.name} — ${(service?.priceCents / 100).toFixed(2)}</p>
             <p><strong>Barber:</strong> {barber?.name}</p>
+            <p><strong>Service:</strong> {service?.name} — ${(service?.priceCents / 100).toFixed(2)}</p>
             <p><strong>Date:</strong> {date} at {time}</p>
           </div>
           {error && <div className="login-error">{error}</div>}
           <div className="book-actions">
-            <button type="button" className="btn btn-secondary" onClick={() => setStep(3)}>Back</button>
+            <button type="button" className="btn btn-secondary" onClick={() => setStep(4)}>Back</button>
             <button type="button" className="btn btn-primary" disabled={submitting} onClick={handleBook}>
               {submitting ? 'Booking…' : 'Confirm Booking'}
             </button>

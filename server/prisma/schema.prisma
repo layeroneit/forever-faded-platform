@@ -63,12 +63,13 @@ model Location {
   payrollEntries PayrollEntry[]
 }
 
-// ============ Services (per location) ============
+// ============ Services (per location or global for all locations) ============
 model Service {
   id          String   @id @default(cuid())
-  locationId  String   @map("location_id")
-  location    Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  locationId  String?  @map("location_id")  // null = available at all locations
+  location    Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
   name        String
+  category    String?  // Face | Adults | Teens | Children | Seniors & Military
   description String?
   durationMinutes Int   @map("duration_minutes") // e.g. 30, 45
   priceCents  Int      @map("price_cents")        // e.g. 3500 = $35.00

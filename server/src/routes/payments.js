@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import Stripe from 'stripe';
 import { requireRoles } from '../middleware/auth.js';
-import { body, param, validationResult } from 'express-validator';
+import { body } from 'express-validator';
+import { validationError } from '../lib/validate.js';
 import { prisma } from '../lib/prisma.js';
 
 const stripe = process.env.STRIPE_SECRET_KEY
@@ -10,14 +11,18 @@ const stripe = process.env.STRIPE_SECRET_KEY
 
 export const paymentsRouter = Router();
 
-// POST /api/payments/create-payment-intent - create Stripe PaymentIntent for prepaid booking
+// GET /api/payments/config — publishable key (no auth required for key)
+paymentsRouter.get('/config', (req, res) => {
+  res.json({ publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || null });
+});
+
+// POST /api/payments/create-payment-intent — client; prepaid booking
 paymentsRouter.post(
   '/create-payment-intent',
   body('appointmentId').notEmpty(),
-  body('amountCents').optional().isInt({ min: 50 }), // optional override; default from appointment
+  body('amountCents').optional().isInt({ min: 50 }),
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (validationError(req, res)) return;
     if (!stripe) return res.status(503).json({ error: 'Stripe not configured' });
     const apt = await prisma.appointment.findUnique({
       where: { id: req.body.appointmentId },
@@ -36,19 +41,17 @@ paymentsRouter.post(
       where: { id: apt.id },
       data: { stripePaymentIntentId: paymentIntent.id },
     });
-    res.json({
-      clientSecret: paymentIntent.client_secret,
-      paymentIntentId: paymentIntent.id,
-    });
+    res.json({ clientSecret: paymentIntent.client_secret, paymentIntentId: paymentIntent.id });
   }
 );
 
-// POST /api/payments/confirm-paid-at-shop - mark as paid at shop (barber/manager)
+// POST /api/payments/confirm-paid-at-shop — barber/manager/owner/admin
 paymentsRouter.post(
   '/confirm-paid-at-shop',
   requireRoles('barber', 'manager', 'owner', 'admin'),
   body('appointmentId').notEmpty(),
   async (req, res) => {
+    if (validationError(req, res)) return;
     const apt = await prisma.appointment.findUnique({ where: { id: req.body.appointmentId } });
     if (!apt) return res.status(404).json({ error: 'Appointment not found' });
     if (req.role === 'barber' && apt.barberId !== req.userId) return res.status(403).json({ error: 'Forbidden' });
@@ -59,10 +62,3 @@ paymentsRouter.post(
     res.json({ ok: true });
   }
 );
-
-// GET /api/payments/config - return publishable key for frontend (no secret)
-paymentsRouter.get('/config', (req, res) => {
-  res.json({
-    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || null,
-  });
-});

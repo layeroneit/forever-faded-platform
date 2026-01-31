@@ -27,10 +27,14 @@ export default function Profile() {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    if (user?.role === 'client' && (!name.trim() || !phone.trim())) {
+      setMessage('Name and phone number are required.');
+      return;
+    }
     setSaving(true);
     setMessage('');
     try {
-      const body = { name, phone };
+      const body = { name: name.trim(), phone: phone.trim() };
       if (user?.role === 'client') body.preferredBarberId = preferredBarberId || null;
       const updated = await users.updateMe(body);
       setProfile(updated);
@@ -50,12 +54,13 @@ export default function Profile() {
       <p className="page-subtitle">Manage your account.</p>
 
       <form onSubmit={handleSave} className="book-panel">
+        <p className="book-hint">Name, email, and phone number are required.</p>
         <label className="book-label">Name</label>
-        <input type="text" className="book-input" value={name} onChange={(e) => setName(e.target.value)} style={{ maxWidth: '100%' }} />
+        <input type="text" className="book-input" value={name} onChange={(e) => setName(e.target.value)} style={{ maxWidth: '100%' }} required placeholder="Full name" />
         <label className="book-label">Email</label>
-        <input type="text" className="book-input" value={profile.email} disabled style={{ maxWidth: '100%', opacity: 0.8 }} />
-        <label className="book-label">Phone</label>
-        <input type="tel" className="book-input" value={phone} onChange={(e) => setPhone(e.target.value)} style={{ maxWidth: '100%' }} />
+        <input type="text" className="book-input" value={profile.email} disabled style={{ maxWidth: '100%', opacity: 0.8 }} aria-label="Email (read-only)" />
+        <label className="book-label">Phone number</label>
+        <input type="tel" className="book-input" value={phone} onChange={(e) => setPhone(e.target.value)} style={{ maxWidth: '100%' }} required placeholder="e.g. (262) 349-9289" />
         {user?.role === 'client' && barbers.length > 0 && (
           <>
             <label className="book-label">Preferred Barber</label>

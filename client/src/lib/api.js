@@ -34,11 +34,22 @@ export const auth = {
 export const locations = {
   list: () => api('/locations'),
   get: (id) => api(`/locations/${id}`),
+  create: (data) => api('/locations', { method: 'POST', body: data }),
+  update: (id, data) => api(`/locations/${id}`, { method: 'PATCH', body: data }),
 };
 
 export const services = {
-  list: (locationId) => api(locationId ? `/services?locationId=${locationId}` : '/services'),
+  list: (locationId, all) => {
+    let path = '/services';
+    const params = [];
+    if (locationId) params.push(`locationId=${locationId}`);
+    if (all) params.push('all=1');
+    if (params.length) path += '?' + params.join('&');
+    return api(path);
+  },
   get: (id) => api(`/services/${id}`),
+  create: (data) => api('/services', { method: 'POST', body: data }),
+  update: (id, data) => api(`/services/${id}`, { method: 'PATCH', body: data }),
 };
 
 export const appointments = {
@@ -94,6 +105,8 @@ export const users = {
   },
   me: () => api('/users/me'),
   updateMe: (body) => api('/users/me', { method: 'PATCH', body }),
+  create: (data) => api('/users', { method: 'POST', body: data }),
+  update: (id, data) => api(`/users/${id}`, { method: 'PATCH', body: data }),
 };
 
 export function setToken(token) {

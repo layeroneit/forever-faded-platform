@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { requireRoles } from '../middleware/auth.js';
-import { body, param, query, validationResult } from 'express-validator';
+import { body, query } from 'express-validator';
+import { validationError } from '../lib/validate.js';
 import { prisma } from '../lib/prisma.js';
 
 export const scheduleRouter = Router();
 
-// GET /api/schedule - list slots (filter by userId or locationId)
+// GET /api/schedule?userId=&locationId=
 scheduleRouter.get('/', query('userId').optional(), query('locationId').optional(), async (req, res) => {
   const where = {};
   if (req.query.userId) where.userId = req.query.userId;
@@ -19,7 +20,7 @@ scheduleRouter.get('/', query('userId').optional(), query('locationId').optional
   res.json(slots);
 });
 
-// POST /api/schedule - create/update slot (barber own, manager/owner any)
+// POST /api/schedule — upsert slot; barber own, manager/owner any
 scheduleRouter.post(
   '/',
   requireRoles('barber', 'manager', 'owner', 'admin'),
@@ -30,8 +31,7 @@ scheduleRouter.post(
   body('endTime').matches(/^\d{2}:\d{2}$/),
   body('isAvailable').optional().isBoolean(),
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (validationError(req, res)) return;
     const userId = req.body.userId || (req.role === 'barber' ? req.userId : null);
     if (!userId) return res.status(400).json({ error: 'userId required' });
     if (req.role === 'barber' && userId !== req.userId) return res.status(403).json({ error: 'Forbidden' });

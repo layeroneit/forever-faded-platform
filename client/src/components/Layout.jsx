@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { MapPin, Menu, X, LogOut, Calendar, User, Home, Users, Scissors, DollarSign, BarChart3, Settings, Package, CreditCard } from 'lucide-react';
+import { MapPin, Menu, X, LogOut, Calendar, User, Home, Users, Scissors, DollarSign, BarChart3, Settings, Package, CreditCard, ClipboardList } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Layout.css';
 
@@ -25,6 +25,7 @@ const navByRole = {
   ],
   owner: [
     { to: '/dashboard', label: 'Dashboard', icon: Home },
+    { to: '/daily-cuts', label: 'Daily Cuts', icon: ClipboardList },
     { to: '/analytics', label: 'Analytics', icon: BarChart3 },
     { to: '/staff', label: 'Staff', icon: Users },
     { to: '/services', label: 'Services', icon: Scissors },
@@ -35,8 +36,10 @@ const navByRole = {
   ],
   admin: [
     { to: '/dashboard', label: 'Dashboard', icon: Home },
+    { to: '/daily-cuts', label: 'Daily Cuts', icon: ClipboardList },
     { to: '/analytics', label: 'Analytics', icon: BarChart3 },
     { to: '/staff', label: 'Staff', icon: Users },
+    { to: '/services', label: 'Services', icon: Scissors },
     { to: '/locations', label: 'Locations', icon: MapPin },
     { to: '/settings', label: 'Settings', icon: Settings },
   ],

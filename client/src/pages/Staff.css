@@ -1,0 +1,226 @@
+.staff-page {
+  max-width: 1000px;
+}
+
+.staff-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Staff page buttons — gold/dark, not high white */
+.staff-page .btn-primary {
+  background: var(--ff-gold);
+  color: var(--ff-black);
+  border: 1px solid var(--ff-gold);
+}
+
+.staff-page .btn-primary:hover:not(:disabled) {
+  background: var(--ff-gold-light);
+  border-color: var(--ff-gold-light);
+}
+
+.staff-page .btn-secondary {
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid var(--ff-border);
+  color: var(--ff-gray);
+}
+
+.staff-page .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ff-white);
+}
+
+.staff-select {
+  padding: 0.5rem 1rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--ff-border);
+  border-radius: 8px;
+  color: var(--ff-white);
+  font-size: 0.9rem;
+}
+
+.staff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.staff-card {
+  background: var(--ff-card);
+  border: 1px solid var(--ff-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.staff-card-selectable {
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.staff-card-selectable:hover {
+  border-color: var(--ff-gold);
+  background: rgba(212, 175, 55, 0.06);
+}
+
+.staff-card-selectable:focus {
+  outline: none;
+  border-color: var(--ff-gold);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.25);
+}
+
+.staff-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid var(--ff-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--ff-gold);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.staff-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.staff-name {
+  font-weight: 600;
+  color: var(--ff-white);
+}
+
+.staff-email,
+.staff-phone {
+  font-size: 0.85rem;
+  color: var(--ff-gray);
+}
+
+.staff-role {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ff-gold);
+}
+
+.staff-location {
+  font-size: 0.8rem;
+  color: var(--ff-gray);
+}
+
+.staff-modal .modal-content {
+  max-width: 420px;
+}
+
+.staff-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.staff-form .form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ff-gold);
+  margin-bottom: 0.35rem;
+}
+
+.staff-form .form-group input,
+.staff-form .form-group select {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--ff-border);
+  border-radius: 8px;
+  color: var(--ff-white);
+  font-size: 0.95rem;
+}
+
+.staff-form .staff-input-readonly {
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--ff-gray);
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+.staff-form .form-error {
+  color: var(--ff-red);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.staff-form .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ff-border);
+}
+
+.staff-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--ff-border);
+}
+
+.staff-modal .modal-header h2 {
+  font-size: 1.25rem;
+  color: var(--ff-gold);
+}
+
+.staff-modal .btn-icon {
+  background: none;
+  border: none;
+  color: var(--ff-gray);
+  font-size: 1.5rem;
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+.staff-modal .btn-icon:hover {
+  color: var(--ff-white);
+}
+
+.staff-form {
+  padding: 1.5rem;
+}
+
+/* Reuse modal overlay from Services if not global */
+.staff-page .modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.staff-page .modal-content {
+  background: var(--ff-card);
+  border: 1px solid var(--ff-border);
+  border-radius: 12px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.empty-state {
+  color: var(--ff-gray);
+  padding: 2rem;
+  text-align: center;
+}

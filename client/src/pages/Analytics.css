@@ -1,0 +1,36 @@
+.analytics-page {
+  max-width: 900px;
+}
+
+.analytics-section {
+  margin-bottom: 2rem;
+}
+
+.analytics-section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ff-gold);
+  margin-bottom: 0.25rem;
+}
+
+.analytics-section-desc {
+  font-size: 0.9rem;
+  color: var(--ff-gray);
+  margin-bottom: 1rem;
+}
+
+.analytics-report .appointments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.analytics-report .daily-cuts-summary {
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  color: var(--ff-gray);
+}
+
+.analytics-report .daily-cuts-summary strong {
+  color: var(--ff-gold);
+}

@@ -19,6 +19,18 @@
   gap: 0.5rem;
 }
 
+.stat-card-link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.stat-card-link:hover {
+  border-color: var(--ff-gold);
+  background: rgba(212, 175, 55, 0.08);
+}
+
 .stat-icon {
   color: var(--ff-gold);
 }

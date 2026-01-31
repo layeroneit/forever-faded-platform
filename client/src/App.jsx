@@ -8,6 +8,11 @@ import Book from './pages/Book';
 import Appointments from './pages/Appointments';
 import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
+import Services from './pages/Services';
+import Staff from './pages/Staff';
+import Locations from './pages/Locations';
+import DailyCuts from './pages/DailyCuts';
+import Analytics from './pages/Analytics';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -42,10 +47,11 @@ export default function App() {
                   <Route path="/appointments" element={<Appointments />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/analytics" element={<Placeholder title="Analytics" />} />
-                  <Route path="/staff" element={<Placeholder title="Staff" />} />
-                  <Route path="/services" element={<Placeholder title="Services" />} />
-                  <Route path="/locations" element={<Placeholder title="Locations" />} />
+                  <Route path="/daily-cuts" element={<DailyCuts />} />
+                  <Route path="/analytics" element={<Analytics />} />
+                  <Route path="/staff" element={<Staff />} />
+                  <Route path="/services" element={<Services />} />
+                  <Route path="/locations" element={<Locations />} />
                   <Route path="/schedule" element={<Placeholder title="Schedule" />} />
                   <Route path="/inventory" element={<Placeholder title="Inventory" />} />
                   <Route path="/payroll" element={<Placeholder title="Payroll" />} />

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { admin, appointments } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import { Calendar, DollarSign, Users, MapPin } from 'lucide-react';
@@ -60,11 +61,11 @@ export default function Dashboard() {
             <div className="stat-value">${((stats.totalRevenueCents || 0) / 100).toLocaleString()}</div>
             <div className="stat-label">Total Revenue</div>
           </div>
-          <div className="stat-card">
+          <Link to="/staff" className="stat-card stat-card-link">
             <div className="stat-icon"><Users size={24} /></div>
             <div className="stat-value">{stats.staffCount}</div>
             <div className="stat-label">Staff</div>
-          </div>
+          </Link>
         </div>
       )}
 
