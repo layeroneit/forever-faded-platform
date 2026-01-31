@@ -52,6 +52,22 @@ npm run dev
 
 Then open **http://localhost:3000** in your browser.
 
+## Server won't start?
+
+If you see `Failed running 'src/index.js'`:
+
+1. **Regenerate Prisma client** (in `server` folder):
+   ```bash
+   npx prisma generate
+   ```
+2. **Run the server directly** to see the full error:
+   ```bash
+   cd server
+   node src/index.js
+   ```
+   Copy the full error message; it usually points to a missing dependency or bad `.env`.
+3. **Node version:** The app is tested on Node 18–22. If you use Node 24+, try Node 20 LTS if errors persist.
+
 ## Seed logins (password: `password123`)
 
 - **Owner:** owner@foreverfaded.com  

@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import Services from './pages/Services';
 import Staff from './pages/Staff';
 import Locations from './pages/Locations';
+import Settings from './pages/Settings';
 import DailyCuts from './pages/DailyCuts';
 import Analytics from './pages/Analytics';
 
@@ -55,7 +56,7 @@ export default function App() {
                   <Route path="/schedule" element={<Placeholder title="Schedule" />} />
                   <Route path="/inventory" element={<Placeholder title="Inventory" />} />
                   <Route path="/payroll" element={<Placeholder title="Payroll" />} />
-                  <Route path="/settings" element={<Placeholder title="Settings" />} />
+                  <Route path="/settings" element={<Settings />} />
                 </Routes>
               </ProtectedRoute>
             }

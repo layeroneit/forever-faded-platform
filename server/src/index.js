@@ -1,5 +1,15 @@
 import 'dotenv/config';
 import 'express-async-errors';
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception:', err.message);
+  console.error(err.stack);
+  process.exit(1);
+});
+process.on('unhandledRejection', (reason, p) => {
+  console.error('Unhandled rejection at:', p, 'reason:', reason);
+  process.exit(1);
+});
 import express from 'express';
 import cors from 'cors';
 import { authRouter } from './routes/auth.js';
@@ -38,8 +48,20 @@ app.use('/api/payroll', authMiddleware, payrollRouter);
 app.use('/api/admin', authMiddleware, adminRouter);
 app.use('/api/users', authMiddleware, usersRouter);
 
+// Unmatched API routes → 404 JSON (so client gets { error: "Not found" } instead of empty)
+app.use('/api', (req, res) => res.status(404).json({ error: 'Not found' }));
+
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Forever Faded API running at http://localhost:${PORT}`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} is already in use. Stop the other process or set PORT in .env.`);
+  } else {
+    console.error('Server error:', err.message);
+  }
+  process.exit(1);
 });

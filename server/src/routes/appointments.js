@@ -3,6 +3,7 @@ import { requireRoles } from '../middleware/auth.js';
 import { body, param, query } from 'express-validator';
 import { validationError } from '../lib/validate.js';
 import { prisma } from '../lib/prisma.js';
+import { sendMail, isEmailConfigured } from '../lib/email.js';
 
 export const appointmentsRouter = Router();
 
@@ -77,6 +78,39 @@ appointmentsRouter.post(
       },
       include: APPOINTMENT_INCLUDE,
     });
+
+    // Send confirmation email if SMTP is configured (fire-and-forget, log result)
+    if (isEmailConfigured() && appointment.client?.email) {
+      const dateStr = startAt.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+      const timeStr = startAt.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+      const priceStr = `$${(appointment.totalCents / 100).toFixed(2)}`;
+      const text = [
+        `Hi ${appointment.client.name},`,
+        '',
+        'Your appointment at Forever Faded is confirmed.',
+        '',
+        `Service: ${appointment.service?.name}`,
+        `Date: ${dateStr} at ${timeStr}`,
+        `Location: ${appointment.location?.name}`,
+        appointment.location?.address ? `Address: ${appointment.location.address}` : null,
+        `Barber: ${appointment.barber?.name}`,
+        `Total: ${priceStr}`,
+        '',
+        'See you soon!',
+      ].filter(Boolean).join('\n');
+      sendMail({
+        to: appointment.client.email,
+        subject: 'Appointment confirmed — Forever Faded',
+        text,
+        html: text.replace(/\n/g, '<br>'),
+      })
+        .then((r) => {
+          if (r.sent) console.log('[appointments] confirmation email sent to', appointment.client.email);
+          else console.error('[appointments] confirmation email failed:', r.error || 'unknown');
+        })
+        .catch((err) => console.error('[appointments] confirmation email error:', err.message));
+    }
+
     res.status(201).json(appointment);
   }
 );

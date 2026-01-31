@@ -96,6 +96,7 @@ export const admin = {
     const q = new URLSearchParams(params).toString();
     return api(q ? `/admin/users?${q}` : '/admin/users');
   },
+  sendTestEmail: (to) => api('/admin/test-email', { method: 'POST', body: { to } }),
 };
 
 export const users = {

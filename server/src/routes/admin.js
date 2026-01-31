@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import { requireRoles } from '../middleware/auth.js';
-import { query } from 'express-validator';
+import { body, query } from 'express-validator';
+import { validationError } from '../lib/validate.js';
 import { prisma } from '../lib/prisma.js';
+import { sendMail, isEmailConfigured } from '../lib/email.js';
 
 export const adminRouter = Router();
 
@@ -55,3 +57,32 @@ adminRouter.get('/users', requireRoles('owner', 'admin'), query('role').optional
   });
   res.json(users);
 });
+
+// POST /api/admin/test-email — owner/admin; send a test email
+adminRouter.post(
+  '/test-email',
+  requireRoles('owner', 'admin'),
+  body('to').isEmail().normalizeEmail(),
+  async (req, res) => {
+    if (validationError(req, res)) return;
+    if (!isEmailConfigured()) {
+      return res.status(400).json({ error: 'SMTP not configured. Set SMTP_HOST, SMTP_USER, SMTP_PASS in .env' });
+    }
+    const result = await sendMail({
+      to: req.body.to,
+      subject: 'Forever Faded — test email',
+      text: [
+        'This is a test email from Forever Faded.',
+        '',
+        'If you received this, SMTP is working.',
+        '',
+        `Sent at ${new Date().toISOString()}`,
+      ].join('\n'),
+    });
+    if (result.sent) {
+      res.json({ ok: true, message: 'Test email sent to ' + req.body.to });
+    } else {
+      res.status(500).json({ error: result.error || 'Failed to send test email' });
+    }
+  }
+);
