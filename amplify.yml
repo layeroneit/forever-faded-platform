@@ -1,0 +1,19 @@
+# AWS Amplify build spec — builds the client (React/Vite) only.
+# Set VITE_API_URL in Amplify env vars to your backend base URL including /api (e.g. https://your-api.com/api).
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - cd client
+        - npm ci
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: client/dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - client/node_modules/**/*

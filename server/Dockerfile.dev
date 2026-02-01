@@ -1,0 +1,17 @@
+# Dev: API server with hot reload (node --watch)
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm install
+
+COPY prisma ./prisma/
+RUN npx prisma generate
+
+COPY . .
+
+EXPOSE 3001
+
+# Apply schema to DB (idempotent), then start dev server with hot reload
+CMD ["sh", "-c", "npx prisma db push && npm run dev"]

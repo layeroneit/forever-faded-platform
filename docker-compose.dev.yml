@@ -1,0 +1,44 @@
+# Dev mode: API + Vite with hot reload. Open http://localhost:3000
+services:
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    container_name: forever-faded-api
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: "file:/data/dev.sqlite"
+      JWT_SECRET: "${JWT_SECRET:-dev-secret-change-me}"
+      JWT_EXPIRES_IN: "${JWT_EXPIRES_IN:-7d}"
+    # Optional: create server/.env from server/.env.example for Stripe/SMTP
+    env_file:
+      - ./server/.env
+    volumes:
+      - ./server:/app
+      - api_node_modules:/app/node_modules
+      - ff_dev_db:/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    container_name: forever-faded-web
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_PROXY_TARGET: http://api:3001
+    volumes:
+      - ./client:/app
+      - web_node_modules:/app/node_modules
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  api_node_modules:
+  web_node_modules:
+  ff_dev_db:

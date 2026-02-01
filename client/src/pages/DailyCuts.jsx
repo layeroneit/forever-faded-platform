@@ -79,7 +79,7 @@ export default function DailyCuts() {
                           <span><MapPin size={14} /> {apt.location.name}</span>
                         )}
                       </div>
-                      <div className="apt-price">${(apt.totalCents / 100).toFixed(2)} · {apt.paymentStatus}</div>
+                      <div className="apt-price">${((apt.totalCents ?? 0) / 100).toFixed(2)} · {apt.paymentStatus}</div>
                     </div>
                   </div>
                 ))}

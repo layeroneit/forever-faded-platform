@@ -97,7 +97,7 @@ export default function Dashboard() {
                     {sale.barber && <span>Barber: {sale.barber.name}</span>}
                     {sale.location && <span><MapPin size={14} /> {sale.location.name}</span>}
                   </div>
-                  <div className="apt-price">${(sale.totalCents / 100).toFixed(2)}</div>
+                  <div className="apt-price">${((sale.totalCents ?? 0) / 100).toFixed(2)}</div>
                 </div>
               </div>
             ))}
@@ -124,7 +124,7 @@ export default function Dashboard() {
                   {apt.client && <span><Users size={14} /> {apt.client.name}</span>}
                   {apt.location && <span><MapPin size={14} /> {apt.location.name}</span>}
                 </div>
-                <div className="apt-price">${(apt.totalCents / 100).toFixed(2)}</div>
+                <div className="apt-price">${((apt.totalCents ?? 0) / 100).toFixed(2)}</div>
               </div>
             </div>
           ))}

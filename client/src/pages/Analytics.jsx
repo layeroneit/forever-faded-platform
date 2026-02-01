@@ -103,7 +103,7 @@ export default function Analytics() {
                       <li key={e.barberId}>
                         <span className="analytics-earner-rank">{i + 1}</span>
                         <span className="analytics-earner-name">{e.barberName}</span>
-                        <span className="analytics-earner-revenue">${(e.revenueCents / 100).toFixed(2)}</span>
+                        <span className="analytics-earner-revenue">${((e.revenueCents ?? 0) / 100).toFixed(2)}</span>
                       </li>
                     ))}
                   </ul>
@@ -119,7 +119,7 @@ export default function Analytics() {
                       <li key={e.barberId}>
                         <span className="analytics-earner-rank">{i + 1}</span>
                         <span className="analytics-earner-name">{e.barberName}</span>
-                        <span className="analytics-earner-revenue">${(e.revenueCents / 100).toFixed(2)}</span>
+                        <span className="analytics-earner-revenue">${((e.revenueCents ?? 0) / 100).toFixed(2)}</span>
                       </li>
                     ))}
                   </ul>
@@ -163,7 +163,7 @@ export default function Analytics() {
                           {apt.barber && <span>Barber: {apt.barber.name}</span>}
                           {apt.location && <span><MapPin size={14} /> {apt.location.name}</span>}
                         </div>
-                        <div className="apt-price">${(apt.totalCents / 100).toFixed(2)} · {apt.paymentStatus}</div>
+                        <div className="apt-price">${((apt.totalCents ?? 0) / 100).toFixed(2)} · {apt.paymentStatus}</div>
                       </div>
                     </div>
                   ))}

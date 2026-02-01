@@ -1,4 +1,5 @@
-const API_BASE = '/api';
+// In dev, Vite proxies /api. In production (e.g. Amplify), set VITE_API_URL to your backend base URL including /api (e.g. https://your-api.com/api).
+const API_BASE = (import.meta.env.VITE_API_URL?.trim?.()) ? import.meta.env.VITE_API_URL.replace(/\/$/, '') : '/api';
 
 function getToken() {
   return localStorage.getItem('ff_token');

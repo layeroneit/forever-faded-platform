@@ -104,9 +104,9 @@ export default function Appointments() {
                   )}
                 </div>
                 <div className="apt-price">
-                  ${((apt.totalCents - (apt.discountCents || 0)) / 100).toFixed(2)}
-                  {(apt.discountCents || 0) > 0 && <span className="apt-discount"> (discount ${(apt.discountCents / 100).toFixed(2)})</span>}
-                  {(apt.refundCents || 0) > 0 && <span className="apt-refund"> · refunded ${(apt.refundCents / 100).toFixed(2)}</span>}
+                  ${(((apt.totalCents ?? 0) - (apt.discountCents ?? 0)) / 100).toFixed(2)}
+                  {(apt.discountCents ?? 0) > 0 && <span className="apt-discount"> (discount ${((apt.discountCents ?? 0) / 100).toFixed(2)})</span>}
+                  {(apt.refundCents ?? 0) > 0 && <span className="apt-refund"> · refunded ${((apt.refundCents ?? 0) / 100).toFixed(2)}</span>}
                   {' · '}{apt.paymentStatus}
                 </div>
 
@@ -153,7 +153,7 @@ export default function Appointments() {
                           type="number"
                           step="0.01"
                           min="0"
-                          placeholder={(apt.discountCents / 100).toFixed(2)}
+                          placeholder={((apt.discountCents ?? 0) / 100).toFixed(2)}
                           value={adjustDiscount}
                           onChange={(e) => setAdjustDiscount(e.target.value)}
                           className="apt-input"
@@ -163,7 +163,7 @@ export default function Appointments() {
                           type="number"
                           step="0.01"
                           min="0"
-                          placeholder={(apt.refundCents || 0) / 100}
+                          placeholder={((apt.refundCents ?? 0) / 100).toFixed(2)}
                           value={adjustRefund}
                           onChange={(e) => setAdjustRefund(e.target.value)}
                           className="apt-input"
