@@ -5,6 +5,8 @@ const prisma = new PrismaClient();
 
 // Forever Faded MKE services from https://foreverfadedmke.com/
 const FOREVER_FADED_SERVICES = [
+  // Test (for Stripe/testing — $1.00)
+  { category: 'Test', name: 'Test Service', description: 'For testing payments only', durationMinutes: 15, priceCents: 100 },
   // Face
   { category: 'Face', name: 'Beard & Head Lining', durationMinutes: 30, priceCents: 3500 },
   { category: 'Face', name: 'Beard Shave', durationMinutes: 30, priceCents: 2500 },

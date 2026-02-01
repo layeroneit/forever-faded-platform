@@ -44,10 +44,10 @@ authRouter.post(
 // POST /api/auth/register — client self-register (name, email, phone required)
 authRouter.post(
   '/register',
-  body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 6 }),
-  body('name').trim().notEmpty(),
-  body('phone').trim().notEmpty(),
+  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  body('name').trim().notEmpty().withMessage('Name is required'),
+  body('phone').trim().notEmpty().withMessage('Phone number is required'),
   async (req, res) => {
     if (validationError(req, res)) return;
     const { email, password, name, phone } = req.body;

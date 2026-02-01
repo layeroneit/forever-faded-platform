@@ -29,7 +29,7 @@ export async function api(path, options = {}) {
 export const auth = {
   login: (email, password) => api('/auth/login', { method: 'POST', body: { email, password }, auth: false }),
   register: (email, password, name, phone) =>
-    api('/auth/register', { method: 'POST', body: { email, password, name, phone }, auth: false }),
+    api('/auth/register', { method: 'POST', body: { email, password, name, phone: phone ?? '' }, auth: false }),
 };
 
 export const locations = {

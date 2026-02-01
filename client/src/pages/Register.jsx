@@ -19,7 +19,7 @@ export default function Register() {
     setError('');
     setLoading(true);
     try {
-      const { token, user: userData } = await authApi.register(email, password, name, phone || undefined);
+      const { token, user: userData } = await authApi.register(email, password, name, phone.trim());
       login(token, userData);
       navigate('/book');
     } catch (err) {
